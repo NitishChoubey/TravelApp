@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package com.ebf.travelapp.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface

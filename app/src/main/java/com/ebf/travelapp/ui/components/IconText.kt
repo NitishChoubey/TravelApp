@@ -53,10 +53,4 @@ fun TextLocation(location: String, big: Boolean = false) {
     )
 }
 
-@Preview
-@Composable
-fun TextLocationPreview() {
-    TravelAppTheme {
-        TextLocation(location = "Paris")
-    }
-}
+

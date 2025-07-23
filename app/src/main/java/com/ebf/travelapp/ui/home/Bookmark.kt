@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -19,11 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ebf.travelapp.R
+import com.ebf.travelapp.data.Place
 import com.ebf.travelapp.ui.components.Menu
 import com.ebf.travelapp.ui.components.TextLocation
 import com.ebf.travelapp.ui.theme.OrangeNice
 import com.ebf.travelapp.ui.theme.TravelAppTheme
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SaveItem(
     @DrawableRes image: Int,
@@ -70,61 +73,19 @@ fun SaveItem(
     }
 }
 
-data class Place(
-    val name: String,
-    val location: String,
-    val stars: String,
-    @DrawableRes val image: Int
-)
-
 @Composable
 fun Bookmark(
     navBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val places = listOf(
-        Place(
-            name = "Paris",
-            location = "France",
-            stars = "4.9",
-            image = R.drawable.landscape03
-        ),
-        Place(
-            name = "London",
-            location = "UK",
-            stars = "4.2",
-            image = R.drawable.landscape04
-        ),
-        Place(
-            name = "New York",
-            location = "USA",
-            stars = "3.9",
-            image = R.drawable.landscape05
-        ),
-        Place(
-            name = "Tokyo",
-            location = "Japan",
-            stars = "4.4",
-            image = R.drawable.landscape06
-        ),
-        Place(
-            name = "Sydney",
-            location = "Australia",
-            stars = "2.1",
-            image = R.drawable.landscape01
-        ),
-        Place(
-            name = "Rome",
-            location = "Italy",
-            stars = "4.5",
-            image = R.drawable.landscape02
-        ),
-        Place(
-            name = "New Delhi",
-            location = "India",
-            stars = "4.1",
-            image = R.drawable.landscape05
-        ),
+        Place("1", "Paris", "France", R.drawable.landscape03, "A beautiful city.", 200.0),
+        Place("2", "London", "UK", R.drawable.landscape04, "A historic city.", 180.0),
+        Place("3", "New York", "USA", R.drawable.landscape05, "A bustling city.", 250.0),
+        Place("4", "Tokyo", "Japan", R.drawable.landscape06, "A vibrant city.", 220.0),
+        Place("5", "Sydney", "Australia", R.drawable.landscape01, "A scenic city.", 190.0),
+        Place("6", "Rome", "Italy", R.drawable.landscape02, "An ancient city.", 210.0),
+        Place("7", "New Delhi", "India", R.drawable.landscape05, "A cultural city.", 150.0),
     )
 
     Column(modifier = modifier.padding(all = 16.dp)) {
@@ -139,15 +100,14 @@ fun Bookmark(
             }
             items(places) { place ->
                 SaveItem(
-                    image = place.image,
+                    image = place.imageResId,
                     title = place.name,
-                    stars = place.stars,
+                    stars = "4.5", // Static value for now
                     location = place.location
                 )
             }
         }
     }
-
 }
 
 @Preview

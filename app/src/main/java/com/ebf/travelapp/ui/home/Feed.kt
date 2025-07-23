@@ -5,9 +5,11 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,34 +21,47 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ebf.travelapp.R
+import com.ebf.travelapp.data.Place
 import com.ebf.travelapp.ui.components.PlaceCard
 import com.ebf.travelapp.ui.components.TextLocation
 import com.ebf.travelapp.ui.components.Title
 import com.ebf.travelapp.ui.theme.*
+import com.ebf.travelapp.viewmodel.SearchViewModel
 
 @Composable
 fun Feed(
-    navToPlaceDetail: () -> Unit,
+    navToPlaceDetail: (Place) -> Unit,
     navToProfile: () -> Unit,
     navToSearch: () -> Unit,
-    modifier: Modifier = Modifier
+    navToBookings: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SearchViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
+    val searchQuery by viewModel.searchQuery.collectAsState(initial = "")
+    val filteredPlaces by viewModel.filteredPlaces.collectAsState(initial = emptyList())
+
     Column(
         modifier = modifier
             .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        TravelAppTopBar(navToProfile)
+        TravelAppTopBar(navToProfile, navToBookings)
         CategorySection()
-        SearchSection(navToSearch)
-        PopularPlace(navToPlaceDetail)
+        SearchSection(
+            searchQuery = searchQuery,
+            onSearchQueryChange = { viewModel.updateSearchQuery(it) },
+            navToSearch = navToSearch
+        )
+        PopularPlace(navToPlaceDetail, filteredPlaces)
         RecommendedSection()
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CategoryItem(
     color: Color,
@@ -91,8 +106,13 @@ fun CategorySection() {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SearchSection(navToSearch: () -> Unit) {
+fun SearchSection(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    navToSearch: () -> Unit
+) {
     val source = remember { MutableInteractionSource() }
     val borderColor = if (MaterialTheme.colors.isLight) {
         MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
@@ -102,14 +122,13 @@ fun SearchSection(navToSearch: () -> Unit) {
 
     Row(modifier = Modifier.height(IntrinsicSize.Min)) {
         OutlinedTextField(
-            value = "Search",
-            onValueChange = {},
+            value = searchQuery,
+            onValueChange = onSearchQueryChange,
             shape = MaterialTheme.shapes.medium,
             trailingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
             colors = TextFieldDefaults.textFieldColors(unfocusedIndicatorColor = borderColor),
             singleLine = true,
-            readOnly = true,
-            interactionSource = source,
+            placeholder = { Text("Search places...") },
             modifier = Modifier
                 .weight(1f)
         )
@@ -136,34 +155,28 @@ fun SearchSection(navToSearch: () -> Unit) {
 
     var clicked by remember { mutableStateOf(false) }
     if (source.collectIsPressedAsState().value && !clicked) {
-        // Prevent double click
         @Suppress("UNUSED_VALUE")
         clicked = true
-
         navToSearch()
     }
 }
 
 @Composable
-fun PopularPlace(navPlaceDetail: () -> Unit) {
+fun PopularPlace(navToPlaceDetail: (Place) -> Unit, popularPlaces: List<Place>) {
     Column {
         Title(text = "Popular Place")
-        Row {
-            PlaceCard(
-                modifier = Modifier.weight(1f),
-                name = "Borobudur",
-                location = "Indonésie",
-                image = R.drawable.landscape01,
-                onClick = navPlaceDetail
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            PlaceCard(
-                modifier = Modifier.weight(1f),
-                name = "Monte Civetta",
-                location = "Alpes",
-                image = R.drawable.landscape02,
-                onClick = navPlaceDetail
-            )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(popularPlaces.size) { index ->
+                PlaceCard(
+                    modifier = Modifier.width(200.dp), // Fixed width for each card
+                    name = popularPlaces[index].name,
+                    location = popularPlaces[index].location,
+                    image = popularPlaces[index].imageResId,
+                    onClick = { navToPlaceDetail(popularPlaces[index]) }
+                )
+            }
         }
     }
 }
@@ -181,12 +194,11 @@ fun RecommendedSection() {
                 .height(150.dp)
                 .clip(MaterialTheme.shapes.medium)
         )
-
     }
 }
 
 @Composable
-fun TravelAppTopBar(navToAccount: () -> Unit) {
+fun TravelAppTopBar(navToAccount: () -> Unit, navToBookings: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -196,18 +208,22 @@ fun TravelAppTopBar(navToAccount: () -> Unit) {
             Icon(Icons.Rounded.Menu, contentDescription = null)
         }
 
-        TextLocation(location = "France", big = true)
+        TextLocation(location = "India", big = true)
 
-        IconButton(onClick = navToAccount) {
-            Image(
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = null,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(36.dp)
-            )
+        Row {
+            IconButton(onClick = navToBookings) {
+                Icon(Icons.Filled.Book, contentDescription = "My Bookings")
+            }
+            IconButton(onClick = navToAccount) {
+                Image(
+                    painter = painterResource(id = R.drawable.profileee),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(36.dp)
+                )
+            }
         }
-
     }
 }
 
@@ -215,7 +231,11 @@ fun TravelAppTopBar(navToAccount: () -> Unit) {
 @Composable
 fun SearchSectionPreview() {
     TravelAppTheme {
-        SearchSection(navToSearch = {})
+        SearchSection(
+            searchQuery = "",
+            onSearchQueryChange = {},
+            navToSearch = {}
+        )
     }
 }
 
@@ -248,9 +268,10 @@ fun FeedPreview() {
     TravelAppTheme {
         Surface(color = MaterialTheme.colors.background) {
             Feed(
+                navToPlaceDetail = {},
                 navToSearch = {},
                 navToProfile = {},
-                navToPlaceDetail = {}
+                navToBookings = {}
             )
         }
     }

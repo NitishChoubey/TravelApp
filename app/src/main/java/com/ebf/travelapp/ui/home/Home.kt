@@ -16,6 +16,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.ebf.travelapp.data.Place
 
 enum class HomeTabs(
     val title: String,
@@ -30,7 +31,7 @@ enum class HomeTabs(
 
 fun NavGraphBuilder.addHomeGraph(
     navController: NavController,
-    navToPlaceDetail: () -> Unit,
+    navToPlaceDetail: (Place) -> Unit,
     modifier: Modifier = Modifier
 ) {
     composable(HomeTabs.FEED.route) {
@@ -38,6 +39,7 @@ fun NavGraphBuilder.addHomeGraph(
             navToPlaceDetail = navToPlaceDetail,
             navToSearch = { navController.navigate(HomeTabs.SEARCH.route) },
             navToProfile = { navController.navigate(HomeTabs.PROFILE.route) },
+            navToBookings = { navController.navigate("my_bookings") },
             modifier = modifier
         )
     }

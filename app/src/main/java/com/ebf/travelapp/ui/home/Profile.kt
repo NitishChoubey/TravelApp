@@ -36,7 +36,7 @@ fun ProfileTemp(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         Image(
-            painter = painterResource(id = R.drawable.profile),
+            painter = painterResource(id = R.drawable.profileee),
             contentDescription = null,
             modifier = Modifier
                 .shadow(elevation = 12.dp)
@@ -47,13 +47,13 @@ fun ProfileTemp(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(28.dp))
 
         Text(
-            text = "Vincent Guillebaud",
+            text = "Nitish Choubey",
             style = MaterialTheme.typography.h6
         )
 
         Spacer(modifier = Modifier.height(2.dp))
 
-        Text(text = "UI/UX Designer", style = MaterialTheme.typography.body2)
+        Text(text = "Android Developer", style = MaterialTheme.typography.body2)
     }
 }
 
@@ -117,14 +117,14 @@ fun ProfileCard() {
                 icon = Icons.Rounded.LocationCity,
                 color = GreenNice,
                 text1 = "City",
-                text2 = "32+"
+                text2 = "15+"
             )
 
             ProfileCardInfo(
                 icon = Icons.Rounded.Flag,
                 color = OrangeNice,
                 text1 = "Country",
-                text2 = "22+"
+                text2 = "0"
             )
 
             ProfileCardInfo(

@@ -14,6 +14,7 @@ import com.ebf.travelapp.ui.theme.PurpleNice
 import com.ebf.travelapp.ui.theme.RedNice
 import com.ebf.travelapp.ui.theme.TravelAppTheme
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ModalFilter(
     modifier: Modifier = Modifier,
@@ -102,12 +103,13 @@ fun FilterPriceSection() {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FilterPriceSlider() {
     var sliderPosition by remember { mutableStateOf(2000f..4000f) }
     RangeSlider(
         steps = 7,
-        values = sliderPosition,
+        value = sliderPosition,
         onValueChange = { sliderPosition = it },
         valueRange = 1000f..5000f,
         onValueChangeFinished = {
